@@ -1,0 +1,15 @@
+{
+  "name": "ai-upscaler-web",
+  "version": "1.0.0",
+  "description": "AI Image Upscaler Web App",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.6",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.1"
+  }
+}

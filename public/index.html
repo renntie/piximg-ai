@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixIMG - AI Upscale</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo-text">PixIMG</div>
+  <button class="btn-primary trigger-upload-btn">Unggah</button>
+</nav>
+
+<section class="hero-section">
+  <h1>Penjernih Foto <span class="highlight-text">AI</span></h1>
+  <p class="hero-desc">
+    Tingkatkan kualitas gambar buram menjadi HD hanya dalam satu klik.
+  </p>
+  <button class="btn-primary trigger-upload-btn">Mulai Sekarang</button>
+</section>
+
+<footer>
+  © 2026 PixIMG • Dev by AMMAR ASHIM
+</footer>
+
+<!-- ===== MODAL UPLOAD (JANGAN UBAH ID) ===== -->
+
+<div id="uploadOverlay" class="upload-overlay hidden">
+  <div class="upload-modal">
+    <button id="closeOverlayBtn" class="close-btn">✕</button>
+
+    <form id="uploadForm">
+      <input type="file" name="image" id="fileInput" hidden accept="image/*">
+
+      <div class="preview-area hidden" id="previewArea">
+        <img id="imagePreview">
+      </div>
+
+      <div class="controls hidden" id="controlsArea">
+        <label>Skala Pembesaran</label>
+        <select id="scale" name="scale">
+          <option value="4">4x (Rekomendasi)</option>
+          <option value="8">8x (Ultra HD)</option>
+        </select>
+
+        <button type="submit" id="submitBtn" class="btn-primary" style="margin-top:20px;width:100%;">
+          Mulai Upscale
+        </button>
+      </div>
+
+      <div id="loading" class="hidden" style="text-align:center;">
+        <div class="spinner"></div>
+        <p>Sedang memproses...</p>
+      </div>
+
+      <div id="result" class="hidden">
+        <h3>Hasil Upscale</h3>
+        <div class="result-img-wrapper">
+          <img id="resultImage">
+        </div>
+        <a id="downloadBtn" target="_blank" class="btn-primary" style="display:block;text-align:center;margin-top:15px;">
+          Download HD
+        </a>
+        <button type="button" id="resetBtn" style="margin-top:10px;width:100%;">
+          Coba Lagi
+        </button>
+      </div>
+
+      <div id="errorMsg" class="error hidden"></div>
+    </form>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
