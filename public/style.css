@@ -301,3 +301,57 @@ select {
     .stats-card { flex-direction: row; justify-content: space-around; padding: 40px; }
     .upload-modal { border-radius: 20px; margin-bottom: auto; align-self: center; }
 }
+.hero-simple {
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.center-content {
+    max-width: 700px;
+}
+
+.hero-simple h1 {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+}
+
+.hero-desc {
+    margin-bottom: 30px;
+    color: var(--text-grey);
+}
+
+.before-after {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.img-box {
+    background: white;
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+}
+
+.img-box img {
+    width: 100%;
+    border-radius: 12px;
+}
+
+.label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+@media (min-width: 768px) {
+    .before-after {
+        flex-direction: row;
+    }
+
+    .img-box {
+        flex: 1;
+    }
+}
