@@ -1,13 +1,9 @@
 const express = require("express");
 const multer = require("multer");
-const Replicate = require("replicate");
+const axios = require("axios");
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
-
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN,
-});
 
 app.post("/api/upscale", upload.single("image"), async (req, res) => {
   try {
@@ -15,32 +11,29 @@ app.post("/api/upscale", upload.single("image"), async (req, res) => {
       return res.status(400).json({ error: "No image uploaded." });
     }
 
-    const scale = parseInt(req.body.scale) || 4;
+    const response = await axios({
+      method: "post",
+      url: "https://api-inference.huggingface.co/models/caidas/swin2SR-classical-sr-x2-64",
+      headers: {
+        Authorization: `Bearer ${process.env.HUGGINGFACE_API_TOKEN}`,
+        "Content-Type": "application/octet-stream",
+      },
+      data: req.file.buffer,
+      responseType: "arraybuffer",
+    });
 
-    // Convert buffer to base64
-    const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+    const base64 = Buffer.from(response.data, "binary").toString("base64");
 
-    // Call Real-ESRGAN model
-    const output = await replicate.run(
-      "nightmareai/real-esrgan",
-      {
-        input: {
-          image: base64Image,
-          scale: scale
-        }
-      }
-    );
-
-    return res.json({
+    res.json({
       success: true,
-      url: output
+      image: `data:image/png;base64,${base64}`,
     });
 
   } catch (error) {
-    console.error("Replicate Error:", error);
+    console.error("HF Error:", error.response?.data || error.message);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: "Upscale failed",
     });
   }
 });
