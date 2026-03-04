@@ -1,79 +1,214 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PixIMG - AI Upscale</title>
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DeepImage - Penjernih Foto AI Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<nav class="navbar">
-  <div class="logo-text">PixIMG</div>
-  <button class="btn-primary trigger-upload-btn">Unggah</button>
-</nav>
-
-<section class="hero-section">
-  <h1>Penjernih Foto <span class="highlight-text">AI</span></h1>
-  <p class="hero-desc">
-    Tingkatkan kualitas gambar buram menjadi HD hanya dalam satu klik.
-  </p>
-  <button class="btn-primary trigger-upload-btn">Mulai Sekarang</button>
-</section>
-
-<footer>
-  © 2026 PixIMG • Dev by AMMAR ASHIM
-</footer>
-
-<!-- ===== MODAL UPLOAD (JANGAN UBAH ID) ===== -->
-
-<div id="uploadOverlay" class="upload-overlay hidden">
-  <div class="upload-modal">
-    <button id="closeOverlayBtn" class="close-btn">✕</button>
-
-    <form id="uploadForm">
-      <input type="file" name="image" id="fileInput" hidden accept="image/*">
-
-      <div class="preview-area hidden" id="previewArea">
-        <img id="imagePreview">
-      </div>
-
-      <div class="controls hidden" id="controlsArea">
-        <label>Skala Pembesaran</label>
-        <select id="scale" name="scale">
-          <option value="4">4x (Rekomendasi)</option>
-          <option value="8">8x (Ultra HD)</option>
-        </select>
-
-        <button type="submit" id="submitBtn" class="btn-primary" style="margin-top:20px;width:100%;">
-          Mulai Upscale
-        </button>
-      </div>
-
-      <div id="loading" class="hidden" style="text-align:center;">
-        <div class="spinner"></div>
-        <p>Sedang memproses...</p>
-      </div>
-
-      <div id="result" class="hidden">
-        <h3>Hasil Upscale</h3>
-        <div class="result-img-wrapper">
-          <img id="resultImage">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          
+                <span>DeepImage</span>
+            </div>
+            <button id="closeSidebar" class="close-sidebar-btn">&times;</button>
         </div>
-        <a id="downloadBtn" target="_blank" class="btn-primary" style="display:block;text-align:center;margin-top:15px;">
-          Download HD
-        </a>
-        <button type="button" id="resetBtn" style="margin-top:10px;width:100%;">
-          Coba Lagi
-        </button>
-      </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="active">Penjernih Foto</a>
+            <a href="#">Gambar ke Teks</a>
+            <a href="#">Hapus Latar Belakang</a>
+            <a href="#">Kotak Alat</a>
+            
+            <div class="nav-divider"></div>
+            <div class="nav-label">Bantuan & FAQ</div>
+            <a href="#">FAQ</a>
+            <a href="#">Sumber Daya</a>
+            <a href="#">Hubungi Kami</a>
+            
+            <div class="nav-label">Perusahaan</div>
+            <a href="#">Tentang Kami</a>
+            <a href="#">Program Afiliasi</a>
+            <a href="#">Diskon Pelajar</a>
+        </nav>
 
-      <div id="errorMsg" class="error hidden"></div>
-    </form>
-  </div>
-</div>
+        <div class="sidebar-footer">
+            <div class="app-buttons">
+               </div>
+            <div class="certifications">
+                <img src="https://cdn.odzre.my.id/lib.png" alt="ISO">
+                <span class="gdpr-badge">GDPR</span>
+            </div>
+            <p class="copyright">© 2026 DeepImage<br>Dev by SANN404 FORUM</p>
+        </div>
+    </aside>
 
-<script src="script.js"></script>
+    <header class="navbar">
+        <div class="container nav-container">
+            <div class="logo-wrapper">
+                <img src="https://cdn.odzre.my.id/lib.png" alt="Logo" class="nav-logo-img">
+                <div class="logo-text">DeepImage</div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-primary-sm trigger-upload-btn">Unggah</button>
+                <button class="menu-toggle" id="openSidebar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="container">
+                <div class="ai-badge">
+                    <img src="https://cdn.odzre.my.id/lib.png" alt="AI">
+                </div>
+                <h1>Penjernih Foto <span class="highlight-text">AI</span></h1>
+                
+                <p class="hero-desc">
+                    Menggunakan alat penyempurna gambar AI kami, Anda sekarang dapat meningkatkan kualitas gambar secara online dengan mudah hanya dengan satu klik. Didukung oleh algoritma peningkatan AI, DeepImage membantu menyempurnakan dan <a href="#">menajamkan foto</a> dalam waktu singkat.
+                </p>
+
+                <div class="hero-image-wrapper">
+                    <img src="https://cdn.odzre.my.id/gkb.png" alt="Perbandingan Balon Udara" class="main-banner-img">
+                    <div class="slider-hint-icon">
+                        <svg viewBox="0 0 24 24" fill="white"><path d="M8 12L12 16V8L8 12ZM16 12L12 8V16L16 12Z" /></svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-split-section">
+            <div class="container">
+                <div class="feature-card">
+                    <div class="image-process-flow">
+                        <img src="https://cdn.odzre.my.id/8el.png" alt="Proses AI Anime" class="process-img">
+                    </div>
+                    
+                    <h2><span class="purple-text">AI</span> Penjernih Foto</h2>
+                    <p class="feature-text">
+                        Kualitas gambar terbaik untuk foto kecil dan buram. Tingkatkan kejernihan dan pencahayaan gambar dengan mudah tanpa kehilangan detail.
+                    </p>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary btn-lg trigger-upload-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            Unggah Gambar
+                        </button>
+                        </div>
+                    
+                    <div class="rating-area">
+                        <span class="score">4.8</span>
+                        <div class="stars">★★★★★</div>
+                        <span class="count">(68k+)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="container">
+                <div class="stats-card">
+                    <div class="thumbs-up-decoration">
+                        <img src="https://cdn.odzre.my.id/o9x.png" alt="Like" style="width:50px; opacity:0.8;">
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-number">120<small>M+</small></div>
+                        <div class="stat-label">Gambar Diproses</div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-number">37<small>M+</small></div>
+                        <div class="stat-label">Pengguna Bahagia</div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-number">3<small>Detik</small></div>
+                        <div class="stat-label">Pemrosesan AI</div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-number">10<small>x</small></div>
+                        <div class="stat-label">Edit Foto Lebih Cepat</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <div class="container">
+                <div class="center-icon">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6565/6565017.png" alt="Rocket">
+                </div>
+                <h2>Tingkatkan Foto <span class="dark-text">Tanpa Kehilangan Kualitas</span></h2>
+                <p class="info-text">
+                    Alat penyempurnaan AI DeepImage unggul dalam meningkatkan resolusi gambar apa pun, baik itu potret, foto produk, teks, atau gambar grafis. Konversi gambar pecah menjadi kualitas definisi tinggi yang menakjubkan dan <a href="#">upscale gambar</a> dalam hitungan detik. Tidak diperlukan keahlian pengaturan ahli atau pengeditan foto!
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Dikembangkan oleh <strong>SANN404 FORUM</strong></p>
+            <p class="legal">Syarat & Ketentuan | Kebijakan Privasi</p>
+        </div>
+    </footer>
+
+    <div id="uploadOverlay" class="upload-overlay hidden">
+        <div class="upload-modal">
+            <button id="closeOverlayBtn" class="close-btn">✕</button>
+            <form id="uploadForm">
+                <input type="file" name="image" id="fileInput" accept="image/jpeg, image/png, image/jpg" hidden>
+                <div class="preview-area" id="previewArea" style="display: none;">
+                    <img id="imagePreview" src="" alt="Preview">
+                </div>
+                <div class="controls" id="controlsArea" style="display: none;">
+                    <label for="scale">Skala Pembesaran:</label>
+                    <select id="scale" name="scale">
+                        <option value="4">4x (Rekomendasi)</option>
+                        <option value="8">8x (Ultra HD)</option>
+                    </select>
+                    <button type="submit" id="submitBtn" class="btn btn-primary btn-block" style="margin-top: 1rem;">Mulai Upscale</button>
+                </div>
+                <div id="loading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>Sedang memproses...</p>
+                </div>
+                <div id="result" class="result hidden">
+                    <h3>Hasil Upscale:</h3>
+                    <div class="result-img-wrapper"><img id="resultImage" src="" alt="Result"></div>
+                    <a id="downloadBtn" href="#" target="_blank" class="btn btn-success btn-block">Download HD</a>
+                    <button type="button" id="resetBtn" class="btn btn-text btn-block" style="margin-top: 0.5rem;">Coba Lagi</button>
+                </div>
+                <div id="errorMsg" class="error hidden"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('openSidebar').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.add('active');
+            document.getElementById('sidebarOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Mencegah scroll
+        });
+
+        function closeSidebarMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('closeSidebar').addEventListener('click', closeSidebarMenu);
+        document.getElementById('sidebarOverlay').addEventListener('click', closeSidebarMenu);
+    </script>
+    
+    <script src="script.js"></script>
 </body>
 </html>
