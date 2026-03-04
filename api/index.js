@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const axios = require("axios");
+const sharp = require("sharp");
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -11,35 +11,32 @@ app.post("/api/upscale", upload.single("image"), async (req, res) => {
       return res.status(400).json({ error: "No image uploaded." });
     }
 
-    const response = await axios({
-      method: "post",
-      url: "https://api-inference.huggingface.co/models/caidas/swin2SR-classical-sr-x2-64",
-      headers: {
-        Authorization: `Bearer ${process.env.HUGGINGFACE_API_TOKEN}`,
-        "Content-Type": "application/octet-stream",
-      },
-      data: req.file.buffer,
-      responseType: "arraybuffer",
-    });
+    const scale = parseInt(req.body.scale) || 2;
 
-    // cek kalau bukan gambar (biasanya error HTML)
-    const contentType = response.headers["content-type"];
-    if (!contentType.includes("image")) {
-      throw new Error("Model not ready or limit reached");
-    }
+    const metadata = await sharp(req.file.buffer).metadata();
 
-    const base64 = Buffer.from(response.data, "binary").toString("base64");
+    const upscaledImage = await sharp(req.file.buffer)
+      .resize({
+        width: metadata.width * scale,
+        height: metadata.height * scale,
+        kernel: sharp.kernel.lanczos3 // kualitas tinggi
+      })
+      .sharpen() // biar lebih tajam
+      .png()
+      .toBuffer();
+
+    const base64 = upscaledImage.toString("base64");
 
     res.json({
       success: true,
-      image: `data:image/png;base64,${base64}`,
+      image: `data:image/png;base64,${base64}`
     });
 
   } catch (error) {
-    console.error("HF Error:", error.response?.data || error.message);
+    console.error("Sharp Error:", error);
     res.status(500).json({
       success: false,
-      error: "Upscale failed",
+      error: "Upscale failed"
     });
   }
 });
