@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixImage - Penjernih Foto AI</title>
+    <title>PixImage - AI Image Enhancement Platform</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
 <header class="navbar">
     <div class="container nav-container">
         <div class="logo-text">PixImage</div>
-        <button class="btn-primary-sm trigger-upload-btn">Unggah</button>
+        <button class="btn-primary-sm trigger-upload-btn">Upload</button>
     </div>
 </header>
 
@@ -19,15 +19,15 @@
     <section class="hero-simple">
         <div class="container center-content">
             
-            <h1>Penjernih Foto <span class="highlight-text">AI</span></h1>
+            <h1>AI Image Enhancer</h1>
             
             <p class="hero-desc">
-                Tingkatkan kualitas, ketajaman, dan resolusi gambar Anda
-                hanya dalam beberapa detik menggunakan teknologi AI.
+                Improve quality, sharpness, and resolution of your images
+                in just a few seconds using AI technology.
             </p>
 
             <button class="btn btn-primary btn-lg trigger-upload-btn">
-                Unggah Gambar Sekarang
+                Upload Image Now
             </button>
 
             <div class="before-after">
@@ -47,9 +47,9 @@
 
 <footer>
     <div class="container">
-        <p>Dikembangkan oleh <strong>AMMAR ASHIM</strong></p>
+        <p>Developed by <strong>AMMAR ASHIM</strong></p>
         <p class="legal">
-            Syarat & Ketentuan | Kebijakan Privasi
+            Terms & Conditions | Privacy Policy
         </p>
     </div>
 </footer>
@@ -69,27 +69,27 @@
             <div class="controls" id="controlsArea" style="display:none;">
                 <label>Skala Pembesaran:</label>
                 <select id="scale" name="scale">
-                    <option value="4">4x (Rekomendasi)</option>
+                    <option value="4">4x (Recomendation)</option>
                     <option value="8">8x (Ultra HD)</option>
                 </select>
                 <button type="submit" id="submitBtn" class="btn btn-primary btn-block" style="margin-top:1rem;">
-                    Mulai Upscale
+                    Start Upscale
                 </button>
             </div>
 
             <div id="loading" class="loading hidden">
                 <div class="spinner"></div>
-                <p>Sedang memproses...</p>
+                <p>Processing image...</p>
             </div>
 
             <div id="result" class="result hidden">
-                <h3>Hasil Upscale:</h3>
+                <h3>Upscaled Image:</h3>
                 <div class="result-img-wrapper">
                     <img id="resultImage">
                 </div>
                 <a id="downloadBtn" class="btn btn-success btn-block">Download HD</a>
                 <button type="button" id="resetBtn" class="btn btn-text btn-block" style="margin-top:0.5rem;">
-                    Coba Lagi
+                    Try Again
                 </button>
             </div>
 
