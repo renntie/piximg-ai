@@ -12,7 +12,6 @@ async function imgupscale(imageBuffer, { scale = 4 } = {}) {
         console.log("STEP 0: Start Upscale");
 
         const scales = [1, 4, 8, 16];
-
         if (!Buffer.isBuffer(imageBuffer)) throw new Error('Image must be a buffer.');
         if (!scales.includes(parseInt(scale))) throw new Error(`Available scale options: ${scales.join(', ')}`);
 
@@ -20,18 +19,17 @@ async function imgupscale(imageBuffer, { scale = 4 } = {}) {
 
         const inst = axios.create({
             baseURL: 'https://supawork.ai/supawork/headshot/api',
-            timeout: 8000, // penting untuk Vercel
+            timeout: 8000,
             headers: {
                 authorization: 'null',
                 origin: 'https://supawork.ai/',
                 referer: 'https://supawork.ai/ai-photo-enhancer',
                 'user-agent': 'Mozilla/5.0',
-                'x-auth-challenge': '',
                 'x-identity-id': identity
             }
         });
 
-        // 1. Get Upload Token
+        // 1️⃣ Get Upload Token
         console.log("STEP 1: Get Upload Token");
         const { data: up } = await inst.get('/sys/oss/token', {
             params: { f_suffix: 'png', get_num: 1, unsafe: 1 }
@@ -40,33 +38,12 @@ async function imgupscale(imageBuffer, { scale = 4 } = {}) {
         const img = up?.data?.[0];
         if (!img) throw new Error('Upload url not found.');
 
-        // 2. Upload Image
+        // 2️⃣ Upload Image
         console.log("STEP 2: Upload Image");
         await axios.put(img.put, imageBuffer);
 
-        // 3. Bypass Cloudflare
-        console.log("STEP 3: Bypass CF");
-        const { data: cf } = await axios.post(
-            'https://api.nekolabs.web.id/tools/bypass/cf-turnstile',
-            {
-                url: 'https://supawork.ai/ai-photo-enhancer',
-                siteKey: '0x4AAAAAACBjrLhJyEE6mq1c'
-            },
-            { timeout: 8000 }
-        );
-
-        if (!cf?.result) throw new Error('Failed to get CF token.');
-
-        // 4. Get Challenge Token
-        console.log("STEP 4: Get Challenge Token");
-        const { data: t } = await inst.get('/sys/challenge/token', {
-            headers: { 'x-auth-challenge': cf.result }
-        });
-
-        if (!t?.data?.challenge_token) throw new Error('Failed to get challenge token.');
-
-        // 5. Create Task
-        console.log("STEP 5: Create Task");
+        // 3️⃣ Create Task (NO CF)
+        console.log("STEP 3: Create Task (No CF)");
         const { data: task } = await inst.post(
             '/media/image/generator',
             {
@@ -76,19 +53,16 @@ async function imgupscale(imageBuffer, { scale = 4 } = {}) {
                 extra_params: { scale: parseInt(scale) },
                 currency_type: 'silver',
                 identity_id: identity
-            },
-            {
-                headers: { 'x-auth-challenge': t.data.challenge_token }
             }
         );
 
         if (!task?.data?.creation_id) throw new Error('Failed to create task.');
 
-        // 6. Polling Result (VERSI CEPAT BIAR GAK TIMEOUT)
-        console.log("STEP 6: Polling Result");
+        // 4️⃣ Polling Result (dipersingkat biar gak timeout)
+        console.log("STEP 4: Polling Result");
 
         let attempts = 0;
-        while (attempts < 6) { // max ~5 detik
+        while (attempts < 6) { // maksimal ~5 detik
             const { data } = await inst.get('/media/aigc/result/list/v1', {
                 params: { page_no: 1, page_size: 10, identity_id: identity }
             });
@@ -111,7 +85,6 @@ async function imgupscale(imageBuffer, { scale = 4 } = {}) {
     }
 }
 
-// API Route
 app.post('/api/upscale', upload.single('image'), async (req, res) => {
     try {
         console.log("Incoming request...");
@@ -133,7 +106,6 @@ app.post('/api/upscale', upload.single('image'), async (req, res) => {
     }
 });
 
-// Static (kalau dipakai)
 app.use(express.static(path.join(__dirname, '../public')));
 
 module.exports = app;
