@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. LOGIKA SIDEBAR & MOBILE MENU ---
+    // ===============================
+    // 1. SIDEBAR
+    // ===============================
     const openSidebarBtn = document.getElementById('openSidebar');
     const closeSidebarBtn = document.getElementById('closeSidebar');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -9,37 +11,34 @@ document.addEventListener('DOMContentLoaded', () => {
     function openSidebar() {
         sidebar.classList.add('active');
         sidebarOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Stop scroll belakang
+        document.body.style.overflow = 'hidden';
     }
 
     function closeSidebar() {
         sidebar.classList.remove('active');
         sidebarOverlay.classList.remove('active');
-        document.body.style.overflow = ''; // Resume scroll
+        document.body.style.overflow = '';
     }
 
     if (openSidebarBtn) openSidebarBtn.addEventListener('click', openSidebar);
     if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
     if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
 
-
-    // --- 2. LOGIKA UPLOAD FOTO (UI FIX) ---
-    
+    // ===============================
+    // 2. UPLOAD UI
+    // ===============================
     const triggerButtons = document.querySelectorAll('.trigger-upload-btn');
     const fileInput = document.getElementById('fileInput');
-    
-    // Elemen Modal
+
     const uploadOverlay = document.getElementById('uploadOverlay');
     const closeOverlayBtn = document.getElementById('closeOverlayBtn');
     const uploadForm = document.getElementById('uploadForm');
-    
-    // Elemen di dalam Modal
+
     const previewArea = document.getElementById('previewArea');
     const imagePreview = document.getElementById('imagePreview');
     const controlsArea = document.getElementById('controlsArea');
     const submitBtn = document.getElementById('submitBtn');
-    
-    // Status/States
+
     const loading = document.getElementById('loading');
     const resultDiv = document.getElementById('result');
     const resultImage = document.getElementById('resultImage');
@@ -47,60 +46,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetBtn = document.getElementById('resetBtn');
     const errorMsg = document.getElementById('errorMsg');
 
-    // A. Buka File Selector saat tombol "Unggah" diklik
+    // buka file selector
     triggerButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            // Reset dulu input value supaya bisa pilih file yang sama berulang kali
-            fileInput.value = ''; 
+            fileInput.value = '';
             fileInput.click();
         });
     });
 
-    // B. Saat file dipilih user
-    fileInput.addEventListener('change', (e) => {
-        if (fileInput.files && fileInput.files.length > 0) {
+    // saat file dipilih
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
             handleFileSelect(fileInput.files[0]);
         }
     });
 
     function handleFileSelect(file) {
-        // Validasi tipe file
         if (!file.type.startsWith('image/')) {
-            alert('Harap upload file gambar (JPG, PNG).');
+            alert('Harap upload file gambar.');
             return;
         }
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            // Tampilkan Modal & Preview
-            resetModalState(); // Bersihkan sisa state lama
-            
+            resetModalState();
             imagePreview.src = e.target.result;
-            
-            // PENTING: Pastikan display block agar terlihat
             previewArea.style.display = 'block';
             controlsArea.style.display = 'block';
-            
-            // Tampilkan Overlay Modal
             uploadOverlay.classList.remove('hidden');
         };
         reader.readAsDataURL(file);
     }
 
-    // C. Tombol Tutup Modal (X)
     closeOverlayBtn.addEventListener('click', () => {
         uploadOverlay.classList.add('hidden');
-        fileInput.value = ''; // Clear input
+        fileInput.value = '';
     });
 
-    // D. Tombol "Coba Lagi / Unggah Lainnya" di hasil akhir
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            uploadOverlay.classList.add('hidden'); // Tutup modal dulu
-            setTimeout(() => {
-                 fileInput.click(); // Buka file manager lagi
-            }, 300);
+            uploadOverlay.classList.add('hidden');
+            setTimeout(() => fileInput.click(), 300);
         });
     }
 
@@ -114,11 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMsg.textContent = '';
     }
 
-
-    // --- 3. LOGIKA BACKEND (TIDAK DIUBAH, SESUAI PERINTAH) ---
+    // ===============================
+    // 3. BACKEND REQUEST
+    // ===============================
     uploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const file = fileInput.files[0];
         if (!file) return;
 
@@ -126,36 +114,38 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('image', file);
         formData.append('scale', document.getElementById('scale').value);
 
-        // Update UI ke mode Loading
         submitBtn.disabled = true;
-        controlsArea.style.display = 'none'; // Sembunyikan tombol kontrol
-        loading.classList.remove('hidden');  // Tampilkan loading spinner
+        controlsArea.style.display = 'none';
+        loading.classList.remove('hidden');
         errorMsg.classList.add('hidden');
 
         try {
-            // === KONEKSI KE BACKEND ASLI (AMAN) ===
             const response = await fetch('/api/upscale', {
                 method: 'POST',
                 body: formData
             });
 
             const data = await response.json();
+            console.log("Response backend:", data);
 
             if (!data.success) {
                 throw new Error(data.error || 'Gagal memproses gambar.');
             }
 
-            // Sukses
-            resultImage.src = data.url;
-            downloadBtn.href = data.url;
-            
+            // ===============================
+            // FIX DOWNLOAD BASE64
+            // ===============================
+            resultImage.src = data.image;
+
+            downloadBtn.href = data.image;
+            downloadBtn.download = "deepimage-hd.png";
+
             loading.classList.add('hidden');
-            resultDiv.classList.remove('hidden'); // Tampilkan hasil
+            resultDiv.classList.remove('hidden');
 
         } catch (error) {
-            // Gagal
             loading.classList.add('hidden');
-            controlsArea.style.display = 'block'; // Tampilkan tombol lagi untuk retry
+            controlsArea.style.display = 'block';
             errorMsg.textContent = error.message;
             errorMsg.classList.remove('hidden');
             submitBtn.disabled = false;
