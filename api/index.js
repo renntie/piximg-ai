@@ -22,6 +22,12 @@ app.post("/api/upscale", upload.single("image"), async (req, res) => {
       responseType: "arraybuffer",
     });
 
+    // cek kalau bukan gambar (biasanya error HTML)
+    const contentType = response.headers["content-type"];
+    if (!contentType.includes("image")) {
+      throw new Error("Model not ready or limit reached");
+    }
+
     const base64 = Buffer.from(response.data, "binary").toString("base64");
 
     res.json({
